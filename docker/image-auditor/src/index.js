@@ -1,6 +1,7 @@
-const mainConfig = require('./config.json');
+const mainConfig = require('../../config.json');
 const auditorConfig = require('./auditor_config.json');
 const net = require('net');
+const dgram = require('dgram');
 
 class Musician {
     constructor(uuid, sound) {
@@ -21,7 +22,39 @@ class Musician {
     }
 }
 
+let orchestra = [];
+
+function init() {
+  startUDPSubscribtion();
+  startTCPStream();
+}
+
 // UDP subscription to the orchestra
+function startUDPSubscribtion() {
+  const socket = dgram.createSocket('udp4');
+  socket.bind(mainConfig.musicianToListenerProtocol.port, function() {
+    console.log('joining multicast group');
+    socket.addMembership(mainConfig.musicianToListenerProtocol.adress);
+  });
+
+  socket.on('message', function(msg, source) {
+    console.log('message ! ');
+    console.log(msg.toString());
+    if(msg.uuid && msg.sound) {
+      console.log('uuid is found');
+      const musician = orchestra.find(element => element.uuid == msg.uuid);
+      if((orchestra.length > 0) && (orchestra.find(element => element.uuid == msg.uuid) != undefined)) {
+        // le musicien a déjà envoyé un message on met à jour la date
+        console.log('musician has been found');
+        musician.updateDate();
+      } else {
+        console.log('musician has been added');
+        // le musicien n'a encore rien envoyé on l'ajoute
+        orchestra.push(new Musician(msg.uuid, msg.sound));
+      }
+    }
+  });
+}
 // TODO
 
 // TCP server to publish the info
@@ -35,7 +68,7 @@ function startTCPStream() {
     console.log('a client is connected !');
 
     // when a client is connected : directly send the orchestra info
-    socket.write(JSON.stringify(new Musician(1234, "pouet")) + "\n");
+    socket.write(JSON.stringify(orchestra) + "\n");
     
     // emit the data only once - Half-close the socket
     socket.end();
@@ -50,4 +83,4 @@ function startTCPStream() {
   });
 }
 
-startTCPStream();
+init();
