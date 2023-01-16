@@ -1,5 +1,5 @@
-const mainConfig = require('../../config.json');
-const auditorConfig = require('./config.json');
+const mainConfig = require('./config.json');
+const auditorConfig = require('./auditor_config.json');
 const net = require('net');
 
 class Musician {
@@ -27,7 +27,7 @@ class Musician {
 // TCP server to publish the info
 function startTCPStream() {
   const server = new net.Server();
-  server.listen(auditorConfig.AuditorTCPServer.port, auditorConfig.AuditorTCPServer.adress, function() {
+  server.listen(auditorConfig.TCPServerPort, function() {
     console.log(`server is listening ! Port: ${server.address().port} , address: ${server.address().address}`);
   });
 
