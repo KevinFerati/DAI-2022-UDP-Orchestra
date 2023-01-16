@@ -1,17 +1,3 @@
-# Formats
-
-## Message Musicien à Auditeur
-
-```json
-{
-	"uuid": "<uuid>",
-	"sound": "x"
-}
-```
-
-## config.json
-
-```json
 {
 	"instruments": {
 		"piano": "ti-ta-ti",
@@ -25,4 +11,3 @@
 		"adress" : "239.255.3.5"
 	}
 }
-```
