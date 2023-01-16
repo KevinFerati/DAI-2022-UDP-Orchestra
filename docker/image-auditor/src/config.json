@@ -1,0 +1,6 @@
+{
+	"AuditorTCPServer": {
+		"port": 2205,
+		"adress" : "127.0.0.1"
+	}
+}
