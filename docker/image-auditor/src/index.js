@@ -25,7 +25,9 @@ class Musician {
 let orchestra = [];
 
 function init() {
+  // start listening to the musicians
   startUDPSubscribtion();
+  // start sending informations about the musicians
   startTCPStream();
 }
 
@@ -38,26 +40,21 @@ function startUDPSubscribtion() {
   });
 
   socket.on('message', function(msg, source) {
-    console.log('message ! ');
-    console.log(msg.toString());
-    if(msg.uuid && msg.sound) {
-      console.log('uuid is found');
-      const musician = orchestra.find(element => element.uuid == msg.uuid);
-      if((orchestra.length > 0) && (orchestra.find(element => element.uuid == msg.uuid) != undefined)) {
-        // le musicien a déjà envoyé un message on met à jour la date
-        console.log('musician has been found');
-        musician.updateDate();
-      } else {
-        console.log('musician has been added');
-        // le musicien n'a encore rien envoyé on l'ajoute
-        orchestra.push(new Musician(msg.uuid, msg.sound));
-      }
+    console.log(`new message : ${msg.toString()}`);
+    const musicianInfo = msg.toString();
+
+    const musician = orchestra.find(element => element.uuid == musicianInfo.uuid);
+    if((orchestra.length > 0) && (orchestra.find(element => element.uuid == musicianInfo.uuid) != undefined)) {
+      // musician has already sent something - change the last active datetime
+      musician.updateDate();
+    } else {
+      // musician never said anything - add it
+      orchestra.push(new Musician(musicianInfo.uuid, musicianInfo.sound));
     }
   });
 }
-// TODO
 
-// TCP server to publish the info
+// start TCP server to publish the orchestra info
 function startTCPStream() {
   const server = new net.Server();
   server.listen(auditorConfig.TCPServerPort, function() {
@@ -66,9 +63,16 @@ function startTCPStream() {
 
   server.on('connection', function(socket) {
     console.log('a client is connected !');
-
     // when a client is connected : directly send the orchestra info
-    socket.write(JSON.stringify(orchestra) + "\n");
+    const activeMusicians = orchestra.filter(element => {
+      // getTime() = milliseconds /1000 for seconds
+      ((element.activeSince.getTime() - new Date().getTime()) / 1000) <= 5
+    });
+
+    console.log(orchestra);
+    console.log(JSON.stringify(orchestra));
+    // musicians that sent something during the last 5 seconds only
+    socket.write(JSON.stringify(activeMusicians) + "\n");
     
     // emit the data only once - Half-close the socket
     socket.end();
@@ -83,4 +87,5 @@ function startTCPStream() {
   });
 }
 
+// unleash hell
 init();
