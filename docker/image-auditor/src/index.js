@@ -1,4 +1,5 @@
-const mainConfig = require('../../config.json');
+// change to '../../config.json' to test locally ---- FIXME WITH BETTER SOLUTION
+const mainConfig = require('./config.json');
 const auditorConfig = require('./auditor_config.json');
 const net = require('net');
 const dgram = require('dgram');
@@ -17,40 +18,49 @@ class Musician {
       // setting up the date
       this.activeSince = new Date();
     }
-    updateDate() {
-        this.activeSince = new Date();
-    }
 }
 
 let orchestra = [];
+
+function registerMusicianSound(uuid, sound) {
+  for(let m of orchestra) {
+    // musician already said something - update active since date
+    if(m.uuid == uuid) {
+      m.activeSince = new Date();
+      return;
+    }
+  }
+  // musician never said anything - add it
+  orchestra.push(new Musician(uuid, sound));
+}
+
+// to be deleted - debugging purpose
+function test() {
+  registerMusicianSound(123456, "pouet");
+  setInterval(function() {registerMusicianSound(123, "trulu");}, 10000);
+}
 
 function init() {
   // start listening to the musicians
   startUDPSubscribtion();
   // start sending informations about the musicians
   startTCPStream();
+
+  // image musician mock test - to be deleted - debugging purpose
+  // test();
 }
 
 // UDP subscription to the orchestra
 function startUDPSubscribtion() {
   const socket = dgram.createSocket('udp4');
   socket.bind(mainConfig.musicianToListenerProtocol.port, function() {
-    console.log('joining multicast group');
+    console.log('UDP --------------- joining multicast group');
     socket.addMembership(mainConfig.musicianToListenerProtocol.adress);
   });
 
   socket.on('message', function(msg, source) {
-    console.log(`new message : ${msg.toString()}`);
-    const musicianInfo = msg.toString();
-
-    const musician = orchestra.find(element => element.uuid == musicianInfo.uuid);
-    if((orchestra.length > 0) && (orchestra.find(element => element.uuid == musicianInfo.uuid) != undefined)) {
-      // musician has already sent something - change the last active datetime
-      musician.updateDate();
-    } else {
-      // musician never said anything - add it
-      orchestra.push(new Musician(musicianInfo.uuid, musicianInfo.sound));
-    }
+    console.log(`UDP --------------- new message : ${msg.toString()}`);
+    registerMusicianSound(msg.toString());
   });
 }
 
@@ -58,31 +68,35 @@ function startUDPSubscribtion() {
 function startTCPStream() {
   const server = new net.Server();
   server.listen(auditorConfig.TCPServerPort, function() {
-    console.log(`server is listening ! Port: ${server.address().port} , address: ${server.address().address}`);
+    console.log(`TCP --------------- server is listening ! Port: ${server.address().port} , address: ${server.address().address}`);
   });
 
   server.on('connection', function(socket) {
-    console.log('a client is connected !');
+    console.log('TCP --------------- a client is connected !');
     // when a client is connected : directly send the orchestra info
-    const activeMusicians = orchestra.filter(element => {
-      // getTime() = milliseconds /1000 for seconds
-      ((element.activeSince.getTime() - new Date().getTime()) / 1000) <= 5
-    });
 
-    console.log(orchestra);
-    console.log(JSON.stringify(orchestra));
-    // musicians that sent something during the last 5 seconds only
+    let activeMusicians = [];
+    const now = new Date();
+    for(let m of orchestra) {
+      const sec = (now.getTime() - m.activeSince.getTime()) / 1000;
+      console.log(`TCP --------------- musician no ${m.uuid} : active ${sec} seconds ago`);
+      if(sec <= 5) {
+        // musicians that sent something during the last 5 seconds only
+        activeMusicians.push(m);
+      }
+    }
+    
     socket.write(JSON.stringify(activeMusicians) + "\n");
     
     // emit the data only once - Half-close the socket
     socket.end();
 
     socket.on('end', function() {
-      console.log('closing connection');
+      console.log('TCP --------------- closing connection');
     });
 
     socket.on('error', function(error) {
-      console.log(`Error : ${error}`);
+      console.log(`TCP --------------- Error : ${error}`);
     });
   });
 }
