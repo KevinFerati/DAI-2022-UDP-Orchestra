@@ -4,6 +4,8 @@ const auditorConfig = require('./auditor_config.json');
 const net = require('net');
 const dgram = require('dgram');
 
+let orchestra = new Map();
+
 class Musician {
     constructor(uuid, sound) {
       this.uuid = uuid;
@@ -14,30 +16,27 @@ class Musician {
             this.instrument = key;
             break;
         }
-      }
-      // setting up the date
+      } // setting up the date
       this.activeSince = new Date();
     }
 }
 
-let orchestra = [];
-
 function registerMusicianSound(uuid, sound) {
-  for(let m of orchestra) {
-    // musician already said something - update active since date
-    if(m.uuid == uuid) {
-      m.activeSince = new Date();
-      return;
-    }
-  }
-  // musician never said anything - add it
-  orchestra.push(new Musician(uuid, sound));
+  orchestra.set(uuid, new Musician(uuid, sound));
 }
 
 // to be deleted - debugging purpose
 function test() {
   registerMusicianSound(123456, "pouet");
   setInterval(function() {registerMusicianSound(123, "trulu");}, 10000);
+}
+
+function removeInactivePlayers() { 
+  for (let [uuid, musician] of orchestra) {
+    const seconds = ((new Date()).getTime() - musician.activeSince.getTime()) / 1000;
+    if (seconds > auditorConfig.MaxSecondsAsInactive)
+      orchestra.delete(uuid);
+  }
 }
 
 function init() {
@@ -48,6 +47,9 @@ function init() {
 
   // image musician mock test - to be deleted - debugging purpose
   // test();
+
+  // detect and remove inactive musicians every 5 seconds
+  setInterval(removeInactivePlayers, 5000);
 }
 
 // UDP subscription to the orchestra
@@ -74,19 +76,7 @@ function startTCPStream() {
   server.on('connection', function(socket) {
     console.log('TCP --------------- a client is connected !');
     // when a client is connected : directly send the orchestra info
-
-    let activeMusicians = [];
-    const now = new Date();
-    for(let m of orchestra) {
-      const sec = (now.getTime() - m.activeSince.getTime()) / 1000;
-      console.log(`TCP --------------- musician no ${m.uuid} : active ${sec} seconds ago`);
-      if(sec <= 5) {
-        // musicians that sent something during the last 5 seconds only
-        activeMusicians.push(m);
-      }
-    }
-    
-    socket.write(JSON.stringify(activeMusicians) + "\n");
+    socket.write(JSON.stringify(Array.from(orchestra.entries())) + "\n");
     
     // emit the data only once - Half-close the socket
     socket.end();
