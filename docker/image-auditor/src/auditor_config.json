@@ -1,3 +1,4 @@
 {
-	"TCPServerPort": 2205
+	"TCPServerPort": 2205,
+	"maxSecondsAsInactive": 5
 }
