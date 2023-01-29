@@ -52,18 +52,71 @@ Enter your response here...
 ## Task 4: implement an "auditor" Node.js application
 
 ### With Node.js, how can we listen for UDP datagrams in a multicast group?
-Enter your response here...
+
+En utilisant la bibliothèque intégrée à Node.js `dgram` permettant ici de créer des sockets UDP et qui nous sert à recevoir des messages comme ceci: 
+
+#### 1 : connection
+```javascript
+const socket = dgram.createSocket('udp4');
+  socket.bind(port, function() {
+    socket.addMembership(adress);
+  });
+```
+La méthode `addMembership()` permet de rejoindre le groupe multicast selon l'adresse donnée en paramètre.
+#### 2: réception
+```javascript
+  socket.on('message', function(msg, source) {
+    // I received a message ! Hurray !
+  });
+```
+L'événement `message` est déclenché à chaque fois qu'un datagramme est reçu.
 
 ### How can we use the Map built-in object introduced in ECMAScript 6 to implement a dictionary?
-Enter your response here...
+Cette structure permet de stocker des paires clés-valeurs. 
+Il est donc possible d'ajouter des entrées en décidant d'une clé associée afin de la retrouver facilement dans la structure. Cette dernière est itérable, il est donc possible de parcourir à la fois les clés et les valeurs.
 
+On peut l'implémenter en javascript comme ceci : 
+```javascript
+let dictionary = new Map();
+// ajout (ou modification si la clé est déjà présente) d'une valeur du dictionnaire
+dictionary.set("Slitheen", "Raxacoricofallapatorius");
+// récupération d'une valeur via sa clé
+dictionary.get("Slitheen");
+// suppression d'une valeur via sa clé
+dictionary.delete("Slitheen");
+// vérification si une paire clé-valeur existe dans le dictionnaire via la clé
+dictionary.has("Slitheen");
+```
 ### When and how do we get rid of inactive players?
-Enter your response here...
+Lorsque l'auditeur commence à écouter les musiciens, une fonction se déclenche toutes les 5 secondes et va parcourir la map contenant les musiciens ayant émis un son. Si un des musiciens a émis son dernier son il y a trop longtemps il est supprimé de la map.
+Ceci permet de toujours renvoyer la liste des musiciens actifs si en parralèle quelqu'un sollicite l'auditeur via une connection TCP.
+
+On peut supprimer un musicien comme indiqué plus haut via sa clé qui ici est son uuid, unique pour chaque musicien:
+```javascript
+ orchestra.delete(uuid);
+```
 
 ### How do I implement a simple TCP server in Node.js?
-Enter your response here...
+le module `net` fournit une API permettant de créer des flux TCP.
+
+#### 1. Mise en mode écoute
+```javascript
+const net   = require('net');
+const server = new net.Server();
+server.listen(auditorConfig.TCPServerPort, function() {
+    // I am ready for new clients !
+});
+```
+La méthode listen() démarre le serveur sur un port spécifique. la fonction indiquée ici sera appelée lorsque le serveur sera prêt à accepter des connexions.
+#### 2. Réception des clients
+```javascript
+server.on('connection', function(socket) {
+    // a client is connected !
+});
+```
+Cette méthode sera déclenchée à chaque nouvelle connexion effectuée par un client , on envoie ici la liste des musiciens actifs par exemple.
 
 ## Task 5: package the "auditor" app in a Docker image
 
 ###  Send us the log file of the validation script to show that everything is ok
-Enter your response here...
+TODO : Log file
