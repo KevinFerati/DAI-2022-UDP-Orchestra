@@ -74,10 +74,8 @@ RUN addgroup -g 1000 node \
 # Contenu fait par nous
 
 
-COPY ./image-auditor/src/ /usr/local/bin/app/src
-COPY ./config.json /usr/local/bin/config.json
-
-WORKDIR /usr/local/bin/app/src
+COPY ./src/ /usr/local/bin
+WORKDIR /usr/local/bin/
 
 RUN ["npm", "install"]
 CMD [ "node", "index.js" ]

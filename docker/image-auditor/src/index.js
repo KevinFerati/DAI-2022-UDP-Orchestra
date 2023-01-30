@@ -1,4 +1,4 @@
-const mainConfig    = require('../../config.json');
+const mainConfig    = require('./config.json');
 const auditorConfig = require('./auditor_config.json');
 const net   = require('net');
 const dgram = require('dgram');

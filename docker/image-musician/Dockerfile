@@ -71,10 +71,9 @@ RUN addgroup -g 1000 node \
 # Contenu fait par nous
 
 
-COPY ./image-musician/src/ /usr/local/bin/app/src
-COPY ./config.json /usr/local/bin/config.json
+COPY ./src/ /usr/local/bin
 
-WORKDIR /usr/local/bin/app/src
+WORKDIR /usr/local/bin/
 
 RUN ["npm", "install"]
 ENTRYPOINT [ "node", "index.js"]

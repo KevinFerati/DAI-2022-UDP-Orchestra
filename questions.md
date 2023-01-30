@@ -4,7 +4,7 @@
 Insert your diagram here...
 
 ### Who is going to send UDP datagrams and when?
-Un datagramme est émis par un musicien à chaque fois qu'il émet un son et chaque musicien actif émet un son toutes les secondes. Un musicien est une instance de l'application musicien qui tourne dans un container docker basé sur la même image: "image-musician". Les containers qui tournent en même temps constituent l'orchestre.
+Un datagramme est émis par un musicien à chaque fois qu'il émet un son et chaque musicien actif émet un son toutes les secondes. Un musicien est une instance de l'application musicien qui tourne dans un conteneur docker basé sur la même image: "image-musician". Les conteneurs qui tournent en même temps constituent l'orchestre.
 
 ### Who is going to listen for UDP datagrams and what should happen when a datagram is received?
 L'auditeur va se mettre à écouter les musiciens pour recevoir leurs datagrammes UDP quand ils émettent des sons. Lorsqu'il reçoit un datagramme, il va soit ajouter le musicien dans la liste des musiciens actifs (ayant émis un son récemment), soit le reconnaître dans la liste et mettre à jour l'heure de son dernier son émis.

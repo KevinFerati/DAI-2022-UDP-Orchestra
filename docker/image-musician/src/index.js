@@ -1,4 +1,4 @@
-const mainConfig     = require('../../config.json');
+const mainConfig     = require('./config.json');
 const musicianConfig = require("./musician_config.json");
 const dgram = require('dgram');
 const uuid = require("uuid");
