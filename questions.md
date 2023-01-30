@@ -4,16 +4,24 @@
 Insert your diagram here...
 
 ### Who is going to send UDP datagrams and when?
-Enter your response here...
+Un datagramme est émis par un musicien à chaque fois qu'il émet un son et chaque musicien actif émet un son toutes les secondes. Un musicien est une instance de l'application musicien qui tourne dans un container docker basé sur la même image: "image-musician". Les containers qui tournent en même temps constituent l'orchestre.
 
 ### Who is going to listen for UDP datagrams and what should happen when a datagram is received?
-Enter your response here...
+L'auditeur va se mettre à écouter les musiciens pour recevoir leurs datagrammes UDP quand ils émettent des sons. Lorsqu'il reçoit un datagramme, il va soit ajouter le musicien dans la liste des musiciens actifs (ayant émis un son récemment), soit le reconnaître dans la liste et mettre à jour l'heure de son dernier son émis.
 
 ### What payload should we put in the UDP datagrams?
-Enter your response here...
+Un datagramme UDP sera envoyé par un musicien à chaque fois qu'il émet un son. Le payload contiendra donc le son émis ainsi que l'uuid du musicien qui l'a généré comme ceci:
+```json
+{
+	"uuid": "<uuid>",
+	"sound": "x"
+}
+```
 
 ### What data structures do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures?
-Enter your response here...
+le "receveveur" UDP, en l'occurence, l'auditeur, va maintenir un dictionnaire contenant les musiciens actifs. Il va y ajouter des musiciens lorsque ces derniers émettent un datagramme UDP (donc un son) et les supprimer s'il détecte qu'un musicien a été silencieux trop longtemps. 
+
+Cette structure rassemblera les musiciens actifs et sera envoyée à chaque client TCP se connectant à l'auditeur.
 
 ## Task 2: implement a "musician" Node.js application
 

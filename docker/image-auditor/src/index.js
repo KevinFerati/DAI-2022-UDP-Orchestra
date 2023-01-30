@@ -24,6 +24,7 @@ class Musician {
 // ============================ Musicians management functions ==================================== //
 
 function registerMusicianSound(uuid, sound) {
+  console.log(`UDP --------------- I received ${sound} from ${uuid}`);
   orchestra.set(uuid, new Musician(uuid, sound));
 }
 
@@ -39,7 +40,7 @@ function removeInactivePlayers() {
 
 // =============================== main Function =================================================== //
 
-// to be deleted - debugging purpose
+// for debugging purpose
 function test() {
   registerMusicianSound(123456, "pouet");
   setInterval(function() {registerMusicianSound(123, "trulu");}, 10000);
@@ -51,7 +52,7 @@ function init() {
   // start sending informations about the musicians
   startTCPStream();
 
-  // to be deleted - debugging purpose
+  // for debugging purpose
   // test();
 
   // detect and remove inactive musicians every x seconds
@@ -69,7 +70,6 @@ function startUDPSubscribtion() {
   });
 
   socket.on('message', function(msg, source) {
-    console.log(`UDP --------------- new message : ${msg.toString()}`);
     registerMusicianSound(msg.toString());
   });
 }
