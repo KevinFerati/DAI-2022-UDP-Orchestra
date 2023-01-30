@@ -19,43 +19,67 @@ Un datagramme UDP sera envoyé par un musicien à chaque fois qu'il émet un son
 ```
 
 ### What data structures do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures?
-le "receveveur" UDP, en l'occurence, l'auditeur, va maintenir un dictionnaire contenant les musiciens actifs. Il va y ajouter des musiciens lorsque ces derniers émettent un datagramme UDP (donc un son) et les supprimer s'il détecte qu'un musicien a été silencieux trop longtemps. 
+le(s) "receveur(s)" UDP, en l'occurence, le / les auditeur(s), va maintenir un dictionnaire contenant les musiciens actifs. Il va y ajouter des musiciens lorsque ces derniers émettent un datagramme UDP (donc un son) et les supprimer s'il détecte qu'un musicien a été silencieux trop longtemps. 
 
 Cette structure rassemblera les musiciens actifs et sera envoyée à chaque client TCP se connectant à l'auditeur.
 
 ## Task 2: implement a "musician" Node.js application
 
 ### In a JavaScript program, if we have an object, how can we serialize it in JSON?
-Enter your response here...
+
+```javascript
+let serializedJson = JSON.stringify({...});
+```
 
 ### What is npm?
-Enter your response here...
+C'est un gestionnaire de paquets qui permet d'installer des programmes / modules, notamment pour des projets et applications NodeJS. Il gère également les dépendances des applications NodeJS.
 
 ### What is the npm install command and what is the purpose of the --save flag?
-Enter your response here...
+Permet d'installer un ou plusieurs paquet(s) disponible(s) sur npm. Le flag --save permet d'indiquer que ce sont des dépendances et de les indiquer dans package.json. Depuis NPM 5, le flag --save est redondant car les paquets sont automatiquement installés en tant que dépendances.
 
 ### How can we use the https://www.npmjs.com/ web site?
-Enter your response here...
+1. Chercher la fonctionnalité / paquet nécessaire
+2. Aller sur la page du paquet qu'on cherche
+3. Installer le paquet avec la commande sur la droite (on peut également regarder les versions minimums, la doc du paquet, etc) 
 
 ### In JavaScript, how can we generate a UUID compliant with RFC4122?
-Enter your response here...
+
+En utilisant le paquet suivant : `https://www.npmjs.com/package/uuid`
+
+1. Installer le paquet `uuid` : `npm install uuid`
+2. Dans un fichier JS, importer le paquet  : `const uuid = require("uuid");`
+3. Générer un uuid (par exemple, v4) : `this.uuid = uuid.v4();`
 
 ### In Node.js, how can we execute a function on a periodic basis?
-Enter your response here...
+
+`setInterval(handler, intervalTimeInMiliseconds)`
+`handler` doit être une fonction.
 
 ### In Node.js, how can we emit UDP datagrams?
-Enter your response here...
+
+En utilisant le module `dgram` déjà fourni avec nodejs puis : 
+
+```javascript
+const dgram = require('dgram');
+const socket = dgram.createSocket('udp4');
+const buffer = new Buffer("...");
+
+socket.send(buffer, 0, buffer.length, [PORT], [ADRESS], (err, bytes) => {
+  console.log("sent a datagram");
+});
+```
+En remplaçant [port] et [adress] par les valeurs voulues.
 
 ### In Node.js, how can we access the command line arguments?
-Enter your response here...
+Avec le tableau `process.argv`.
 
 ## Task 3: package the "musician" app in a Docker image
 
 ### What is the purpose of the ENTRYPOINT statement in our Dockerfile?
-Enter your response here...
+Cette instruction va exécuter la commande fournie dans les paramètres du ENTRYPOINT, dans l'ordre donnée au moment du lancement du conteneur. Elle va également suffixer les arguments données via la commande `docker run` aux paramètres donnés à ENTRYPOINT.
 
 ### How can we check that our running containers are effectively sending UDP datagrams?
-Enter your response here...
+Nous pouvons mettre un log avec `console.log` au callback de la fonction `socket.send` puis aller vérifier les logs du conteneur. Nous pouvons également faire la même chose dans l'auditeur, après la réception d'un datagramme.
 
 ## Task 4: implement an "auditor" Node.js application
 
@@ -96,8 +120,9 @@ dictionary.delete("Slitheen");
 dictionary.has("Slitheen");
 ```
 ### When and how do we get rid of inactive players?
-Lorsque l'auditeur commence à écouter les musiciens, une fonction se déclenche toutes les 5 secondes et va parcourir la map contenant les musiciens ayant émis un son. Si un des musiciens a émis son dernier son il y a trop longtemps il est supprimé de la map.
-Ceci permet de toujours renvoyer la liste des musiciens actifs si en parralèle quelqu'un sollicite l'auditeur via une connection TCP.
+
+Lorsque l'auditeur reçoit un son, une fonction va s'exécuter 5 secondes après la réception du son et va parcourir la map contenant les musiciens ayant émis un son. Si un des musiciens a émis son dernier son il y a trop longtemps il est supprimé de la map.
+Ceci permet de toujours renvoyer la liste des musiciens actifs si en parallèle quelqu'un sollicite l'auditeur via une connection TCP.
 
 On peut supprimer un musicien comme indiqué plus haut via sa clé qui ici est son uuid, unique pour chaque musicien:
 ```javascript

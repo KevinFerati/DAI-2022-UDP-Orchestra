@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "net": "^1.0.2",
     "uuid": "^9.0.0"
   }
 }
