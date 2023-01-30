@@ -1,2 +1,43 @@
 origin	https://github.com/KevinFerati/DAI-2022-UDP-Orchestra.git (fetch)
 origin	https://github.com/KevinFerati/DAI-2022-UDP-Orchestra.git (push)
+Starting auditor container "f4d6472e1a2352a1a2b8331dae37fb2ae2019b1eb624b526d722665dd4baaea4"
+Starting auditor container "ac912bd18054da9526ee53960c3d586bebcee9a2f7c41b3112b576e1e96e86b4"
+Starting auditor container "ec37b22b42ce451adcf73bbfba020b2bc281f4c645a6a5b17bb32204f7c7f64b"
+Starting auditor container "e4a349e7dd2d13800f475a1bfe25932aac9cabaf3165df872c6a63a7a520935d"
+Starting auditor container "9e1d30fee4ebe873877384c1ac875a6596353af9ecbb8a5d210b464189ca0a60"
+Starting auditor container "bc85a8f961e74e35da93f834a13bdc6fd0f7f8ed59c856fddefc0ed59e108198"
+Starting auditor container "e2afd3c22029f67d269650c368473e788867ff36b1126954550ed530009edc5d"
+Starting auditor container "3530903d6bb27cd03b9a8630e6b8c2d808a6f0e9e502c6f0c1f49c7cfb135712"
+Starting auditor container "86da0f3c74942155a8b9f165c9dd3324139192ed51576ae10bf41d9535fd2b60"
+Starting auditor container "378d90269757e7bd007d9b14eb31e606b23e4f20a75c2f6dbd8c39a15fdf3793"
+Starting auditor container "210874271c79752453719a1a3cb74b1824728ef86fe59d63abfc052eb1a86444"
+11 containers have been started.
+ac912bd18054da9526ee53960c3d586bebcee9a2f7c41b3112b576e1e96e86b4 : index.js,flute
+ec37b22b42ce451adcf73bbfba020b2bc281f4c645a6a5b17bb32204f7c7f64b : index.js,piano
+e2afd3c22029f67d269650c368473e788867ff36b1126954550ed530009edc5d : index.js,drum
+378d90269757e7bd007d9b14eb31e606b23e4f20a75c2f6dbd8c39a15fdf3793 : index.js,flute
+e4a349e7dd2d13800f475a1bfe25932aac9cabaf3165df872c6a63a7a520935d : index.js,flute
+f4d6472e1a2352a1a2b8331dae37fb2ae2019b1eb624b526d722665dd4baaea4 : index.js,drum
+bc85a8f961e74e35da93f834a13bdc6fd0f7f8ed59c856fddefc0ed59e108198 : index.js,trumpet
+86da0f3c74942155a8b9f165c9dd3324139192ed51576ae10bf41d9535fd2b60 : index.js,flute
+210874271c79752453719a1a3cb74b1824728ef86fe59d63abfc052eb1a86444 : index.js,flute
+9e1d30fee4ebe873877384c1ac875a6596353af9ecbb8a5d210b464189ca0a60 : index.js,flute
+3530903d6bb27cd03b9a8630e6b8c2d808a6f0e9e502c6f0c1f49c7cfb135712 : index.js
+Auditor validation: success: ["drum","drum","flute","flute","flute","flute","flute","flute","piano","trumpet"]
+There are 10 musicians, let's kill one
+killed 86da0f3c74942155a8b9f165c9dd3324139192ed51576ae10bf41d9535fd2b60
+Auditor validation: success: ["drum","drum","flute","flute","flute","flute","flute","piano","trumpet"]
+Scheduling a new test
+There are 9 musicians, let's kill one
+killed 378d90269757e7bd007d9b14eb31e606b23e4f20a75c2f6dbd8c39a15fdf3793
+Auditor validation: success: ["drum","drum","flute","flute","flute","flute","piano","trumpet"]
+Scheduling a new test
+There are 8 musicians, let's kill one
+killed e4a349e7dd2d13800f475a1bfe25932aac9cabaf3165df872c6a63a7a520935d
+Auditor validation: success: ["drum","drum","flute","flute","flute","piano","trumpet"]
+Scheduling a new test
+There are 7 musicians, let's kill one
+killed ec37b22b42ce451adcf73bbfba020b2bc281f4c645a6a5b17bb32204f7c7f64b
+Auditor validation: success: ["drum","drum","flute","flute","flute","trumpet"]
+Scheduling a new test
+We have done all tests.

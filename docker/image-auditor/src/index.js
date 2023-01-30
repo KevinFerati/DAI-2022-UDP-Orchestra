@@ -22,11 +22,6 @@ class Musician {
 
 // ============================ Musicians management functions ==================================== //
 
-function registerMusicianSound(uuid, sound) {
-  console.log(`UDP --------------- I received ${sound} from ${uuid}`);
-  orchestra.set(uuid, new Musician(uuid, sound));
-}
-
 function removeInactivePlayers() { 
   for (let [uuid, musician] of orchestra) {
     const secondsSinceLastSound = ((new Date()).getTime() - musician.activeSince.getTime()) / 1000;
@@ -37,26 +32,23 @@ function removeInactivePlayers() {
   }
 }
 
-// =============================== main Function =================================================== //
+function registerMusicianSound(uuid, sound) {
+  console.log(`UDP --------------- I received ${sound} from ${uuid}`);
+  orchestra.set(uuid, new Musician(uuid, sound));
 
-// for debugging purpose
-function test() {
-  registerMusicianSound(123456, "pouet");
-  setInterval(function() {registerMusicianSound(123, "trulu");}, 10000);
+  // detect and remove inactive musicians after x seconds
+  // X = number of seconds without playing to be considered inactive
+  setTimeout(removeInactivePlayers, auditorConfig.maxSecondsAsInactive * 1000);
 }
+
+
+// =============================== main Function =================================================== //
 
 function init() {
   // start listening to the musicians
   startUDPSubscribtion();
   // start sending informations about the musicians
   startTCPStream();
-
-  // for debugging purpose
-  // test();
-
-  // detect and remove inactive musicians every x seconds
-  // X = number of seconds without playing to be considered inactive
-  setInterval(removeInactivePlayers, (auditorConfig.maxSecondsAsInactive * 1000));
 }
 
 // =============================== UDP subscription to the orchestra =============================== //
