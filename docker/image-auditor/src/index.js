@@ -1,5 +1,4 @@
-// change to '../../config.json' to test locally ---- FIXME WITH BETTER SOLUTION
-const mainConfig    = require('./config.json');
+const mainConfig    = require('../../config.json');
 const auditorConfig = require('./auditor_config.json');
 const net   = require('net');
 const dgram = require('dgram');
@@ -42,7 +41,7 @@ function removeInactivePlayers() {
 // to be deleted - debugging purpose
 function test() {
   registerMusicianSound(123456, "pouet");
-  setInterval(function() {registerMusicianSound(123, "trulu");}, 10000);
+  setInterval(function () { registerMusicianSound(123, "trulu"); }, 10000);
 }
 
 function init() {
@@ -70,7 +69,8 @@ function startUDPSubscribtion() {
 
   socket.on('message', function(msg, source) {
     console.log(`UDP --------------- new message : ${msg.toString()}`);
-    registerMusicianSound(msg.toString());
+    let soundOrigin = JSON.parse(msg.toString());
+    registerMusicianSound(soundOrigin.uuid, soundOrigin.sound);
   });
 }
 
@@ -85,7 +85,8 @@ function startTCPStream() {
   server.on('connection', function(socket) {
     console.log('TCP --------------- a client is connected !');
     // directly send the orchestra info when a client is connected
-    socket.write(JSON.stringify(Array.from(orchestra.entries())) + "\n");
+    console.log(orchestra.values());
+    socket.write(JSON.stringify(Array.from(orchestra.values())) + "\n");
     socket.end();
 
     socket.on('end', function() {
