@@ -52,7 +52,7 @@ function init() {
   startTCPStream();
 
   // to be deleted - debugging purpose
-  test();
+  // test();
 
   // detect and remove inactive musicians every x seconds
   // X = number of seconds without playing to be considered inactive
